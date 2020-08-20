@@ -42,9 +42,9 @@ def new_post(request):
 
 
 def profile(request, username):
-    author = User.objects.filter(username=username).get()
+    author = get_object_or_404(User, username=username)
     # Пагинатор
-    post_list = Post.objects.filter(author=author)
+    post_list = author.posts.all()
     paginator = Paginator(post_list, 10)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
@@ -55,8 +55,7 @@ def profile(request, username):
         {
             'page': page,
             'paginator': paginator,
-            'count_posts': len(post_list),
-            'post': '' if len(post_list) == 0 else post_list[0],
+            'count_posts': post_list.count(),
             'author': author,
         }
     )
@@ -65,8 +64,8 @@ def profile(request, username):
 def post_view(request, username, post_id):
     author = get_object_or_404(User, username=username)
 
-    post = get_object_or_404(Post, id=post_id)
-    cnt_posts = Post.objects.filter(author=author).count()
+    post = get_object_or_404(Post, id=post_id, author=author)
+    cnt_posts = author.posts.count()
     return render(
         request,
         'post.html',
@@ -80,14 +79,14 @@ def post_view(request, username, post_id):
 
 @login_required
 def post_edit(request, username, post_id):
-    post = get_object_or_404(Post, id=post_id)
+    author = get_object_or_404(User, username=username)
+    post = get_object_or_404(Post, id=post_id, author=author)
+
     if post.author != request.user:
-        return post_view(request, username, post_id)
+        return redirect('user_post', username=username, post_id=post_id)
+
     form = PostForm(request.POST, instance=post)
     if request.method != 'POST' or not form.is_valid():
         return render(request, 'new.html', {'form': form, 'type': 'change', 'post': post})
     form.save()
-    return redirect('post', username=username, post_id=post_id)
-
-
-
+    return redirect('user_post', username=username, post_id=post_id)

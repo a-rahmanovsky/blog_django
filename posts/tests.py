@@ -61,5 +61,5 @@ class TestMethods(TestCase):
         text = 'text123'
         self.client.post('/new/', data={'text': text}, follow=True)
         new_text = 'text123_edit'
-        response = self.client.post(f'/{self.user.username}/1/edit/', data={'text': new_text}, follow=True)
+        self.client.post(f'/{self.user.username}/1/edit/', data={'text': new_text}, follow=True)
         self.help_test(new_text)

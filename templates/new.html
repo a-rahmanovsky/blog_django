@@ -6,10 +6,11 @@
 <div class="row justify-content-center">
     <div class="col-md-8 p-5">
         <div class="card">
-            {% if type == "new" %}
-            <div class="card-header">Добавить пост</div>
+            {% if post %}
+                <div class="card-header">Редактировать пост</div>
+
             {% else %}
-            <div class="card-header">Редактировать пост</div>
+                <div class="card-header">Добавить пост</div>
             {% endif %}
                 <div class="card-body">
 
@@ -32,10 +33,10 @@
                                 </div>
                         </div>
                     {% endfor %}
-                         {% if type == "new" %}
-                         <input type="submit" value="Запостить">
+                         {% if post %}
+                            <input type="submit" value="Сохранить">
                          {% else %}
-                         <input type="submit" value="Сохранить">
+                            <input type="submit" value="Запостить">
                          {% endif %}
                           </form>
                 </div> <!-- card body -->
